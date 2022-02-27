@@ -1,0 +1,44 @@
+func @read(str)
+    let lstr = @listify-string(str)
+        #delegate-to @lread(lstr)
+    end let
+end @read
+
+func @lread(raw-lstr)
+    let lstr = @trim-leading-spaces(raw-lstr)
+        if '(' === car(lstr)
+            { result leftover } =  @read-list(lstr)
+            if ')' === car(leftover)
+               { result cdr(leftover) }
+            else
+               @read-error ("while reading list ~a, expected ) but got ~a" raw-lstr leftover)
+        else
+            #delegate-to @lread-atom(lstr)
+    end let
+end @lread
+
+func @lread-list (raw-lstr) >> { list lstr }
+    let lstr = @trim-leading-spaces (raw-lstr)
+	if @empty(lstr)
+	    @NIL
+	else
+	   let front = @upto-separator(lstr)
+	       let tail = @after-separator(lstr)
+		 @reverse (@cons (@lread(front) @lread-list(tail)))
+	       end let
+	   end let
+       end if
+   end let
+end @read-list
+
+func @lread-atom (lstr) >> { index lstr }
+   let lstr = @trim-leading-spaces (raw-lstr)
+       let front = @upto-separator(raw-lstr)
+	   let tail = @after-separator(raw-lstr)
+	       let atom-index = @lread(front)
+		   { atom-index tail }
+	       end let
+	   end let
+       end let
+   end let
+end @read-atom
