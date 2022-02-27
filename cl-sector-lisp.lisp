@@ -451,7 +451,7 @@
         (@print v)))
     ))
 
-(defun main ()
+(defun main14 ()
   (initialize-memory)
   (let ((mem (make-instance 'atom-memory :bytes *memory*)))
     (let ((program (@read "A" mem)))
@@ -459,5 +459,8 @@
     (let ((program (@read "CONS" mem)))
       (@print program))
     ))
+
+(defun main ()
+  (main12))
 
 
